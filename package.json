@@ -1,0 +1,36 @@
+{
+  "name": "broccoli-multifilter",
+  "description": "Helper base class providing caching for Broccoli plugins that compile files that depend on other files",
+  "version": "1.0.0",
+  "author": "Jo Liss <joliss42@gmail.com>",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "test:debug": "mocha debug",
+    "test:debug:brk": "mocha --debug-brk",
+    "test:watch": "mocha --watch"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/broccolijs/broccoli-multifilter"
+  },
+  "keywords": [
+    "broccoli-helper",
+    "cache"
+  ],
+  "dependencies": {
+    "broccoli-plugin": "^1.0.0",
+    "merge-trees": "^1.0.1",
+    "mkdirp": "^0.5.1",
+    "promise-map-series": "^0.2.1"
+  },
+  "devDependencies": {
+    "broccoli-fixture": "^1.0.0",
+    "chai": "^3.0.0",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.2.0",
+    "mocha-eslint": "^3.0.1",
+    "rimraf": "^2.4.2"
+  }
+}
