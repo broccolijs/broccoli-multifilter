@@ -33,6 +33,11 @@ class MultiFilter extends Plugin {
 
     let buildError = null;
 
+    this._stats = {
+      cacheMisses: [],
+      cacheHits: []
+    };
+
     return mapSeries(tokens, (token) => {
       let cacheItem = oldCache.get(token);
 
@@ -51,10 +56,13 @@ class MultiFilter extends Plugin {
         // Cache hit
         newOutputDirectories.push(cacheItem.outputDirectoryPath);
         newCache.set(token, cacheItem);
+        this._stats.cacheHits.push(token);
         return; // continue
       }
 
       // No cache hit. Build file.
+      this._stats.cacheMisses.push(token);
+
       let outputDirectoryPath = this._makeCacheDir();
       newOutputDirectories.push(outputDirectoryPath);
 
