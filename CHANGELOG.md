@@ -1,5 +1,7 @@
 # master
 
+# 2.0.0
+
 * We now require that all dependencies exist, and expect a `{ dependencies:
   [...] }` object as return value from the callback
 

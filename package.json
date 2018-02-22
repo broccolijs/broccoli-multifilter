@@ -1,7 +1,7 @@
 {
   "name": "broccoli-multifilter",
   "description": "Helper base class providing caching for Broccoli plugins that compile files that depend on other files",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "author": "Jo Liss <joliss42@gmail.com>",
   "main": "index.js",
   "scripts": {
