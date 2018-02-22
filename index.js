@@ -1,6 +1,7 @@
 "use strict";
 
 let fs = require("fs");
+let path = require("path");
 let Plugin = require("broccoli-plugin");
 let mapSeries = require("promise-map-series");
 let MergeTrees = require("merge-trees");
@@ -50,15 +51,20 @@ class MultiFilter extends Plugin {
         return; // continue
       }
 
-      if (
-        cacheItem != null &&
-        cacheItem.statHash === hashFiles(cacheItem.dependencies)
-      ) {
-        // Cache hit
-        newOutputDirectories.push(cacheItem.outputDirectoryPath);
-        newCache.set(token, cacheItem);
-        this._stats.cacheHits.push(token);
-        return; // continue
+      if (cacheItem != null) {
+        let currentHash = null;
+        try {
+          currentHash = hashFiles(cacheItem.dependencies);
+        } catch (e) {
+          // ignore errors
+        }
+        if (currentHash != null && cacheItem.statHash === currentHash) {
+          // Cache hit
+          newOutputDirectories.push(cacheItem.outputDirectoryPath);
+          newCache.set(token, cacheItem);
+          this._stats.cacheHits.push(token);
+          return; // continue
+        }
       }
 
       // No cache hit. Build file.
@@ -71,11 +77,15 @@ class MultiFilter extends Plugin {
         .then(() => {
           return buildFileCallback.call(this, token, outputDirectoryPath);
         })
-        .then(dependencies => {
-          if (!Array.isArray(dependencies))
+        .then(obj => {
+          if (obj == null || obj.dependencies == null)
             throw new Error(
-              "buildAndCache callback must return an array of dependencies"
+              "buildAndCache callback must return an object { dependencies: [...] }"
             );
+          let dependencies = obj.dependencies;
+          if (!Array.isArray(dependencies)) {
+            throw new Error("Expected dependencies array, got " + dependencies);
+          }
           if (dependencies.length === 0)
             throw new Error(
               "buildAndCache callback must return at least one dependency, including the input file itself"
@@ -86,7 +96,7 @@ class MultiFilter extends Plugin {
           // we're stat'ing them after. As a result, if a file gets changed
           // immediately after it was compiled, but before it is hashed here, we
           // might miss a change.
-          let statHash = hashFiles(dependencies, { failIfNoFilesFound: true });
+          let statHash = hashFiles(dependencies);
           let cacheItem = {
             outputDirectoryPath: outputDirectoryPath,
             dependencies: dependencies,
@@ -121,7 +131,7 @@ class MultiFilter extends Plugin {
   _makeCacheDir() {
     // We could generate pretty paths from the token (input file path), but for
     // now we just use numbers
-    let p = this.cachePath + "/" + this._cacheCounter;
+    let p = this.cachePath + path.sep + this._cacheCounter;
     fs.mkdirSync(p);
     this._cacheCounter++;
     return p;

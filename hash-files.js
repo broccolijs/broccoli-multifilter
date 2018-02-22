@@ -1,8 +1,8 @@
 "use strict";
 
 let crypto = require("crypto");
-let util = require("util");
 let fs = require("fs");
+let path = require("path");
 
 module.exports = hashFiles;
 
@@ -56,58 +56,37 @@ class Hash {
   }
 }
 
-function hashFiles(fullPaths, options) {
-  if (options == null) options = {};
+function hashFiles(fullPaths) {
   let hash = new Hash();
-  let filesFound = 0;
   for (let i = 0; i < fullPaths.length; i++) {
-    filesFound += _hashFileOrDirectory(hash, fullPaths[i]);
-  }
-  if (options.failIfNoFilesFound && filesFound === 0) {
-    throw new Error(
-      "None of the following files exist: " + util.inspect(fullPaths)
-    );
+    updateHash(hash, fullPaths[i]);
   }
   return hash.digest();
 }
 
-const NOT_FOUND_TAG = 0;
-const FILE_TAG = 1;
-const DIR_TAG = 2;
-const OTHER_FILE_TYPE_TAG = 3;
+const FILE_TAG = 0;
+const DIR_TAG = 1;
+// We do not currently support depending on non-existent files
+// const NOT_FOUND_TAG = 2;
 
-function _hashFileOrDirectory(hash, fullPath) {
-  let filesFound = 0;
-  let stats;
-  try {
-    stats = fs.statSync(fullPath);
-  } catch (e) {
-    hash.updateUInt8(NOT_FOUND_TAG);
-    return 0;
-  }
-  filesFound += 1;
-  hash.updateUInt16(stats.mode);
+function updateHash(hash, fullPath) {
+  let stats = fs.statSync(fullPath);
   if (stats.isDirectory()) {
     hash.updateUInt8(DIR_TAG);
     let entries;
-    try {
-      entries = fs.readdirSync(fullPath).sort();
-    } catch (err) {
-      hash.updateNumber(-1);
-      return 0; // treat stat but failed readdir as no file found
-    }
+    entries = fs.readdirSync(fullPath).sort();
     hash.updateNumber(entries.length);
     for (let i = 0; i < entries.length; i++) {
       hash.updateString(entries[i]);
       hash.updateUInt8(0);
-      filesFound += _hashFileOrDirectory(hash, fullPath + "/" + entries[i]);
+      updateHash(hash, fullPath + path.sep + entries[i]);
     }
   } else if (stats.isFile()) {
     hash.updateUInt8(FILE_TAG);
+    hash.updateUInt16(stats.mode);
     hash.updateUInt48(stats.mtime.getTime());
     hash.updateNumber(stats.size);
   } else {
-    hash.updateUInt8(OTHER_FILE_TYPE_TAG);
+    throw new Error("Unexpected file type: " + fullPath);
   }
-  return filesFound;
 }

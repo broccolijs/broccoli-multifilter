@@ -27,7 +27,7 @@ class TestMultiFilter extends MultiFilter {
       token,
       outputDirectoryPath
     ) {
-      return this[token].call(this, outputDirectoryPath);
+      return { dependencies: this[token].call(this, outputDirectoryPath) };
     });
   }
 
@@ -45,8 +45,7 @@ class TestMultiFilter extends MultiFilter {
     return [
       this.inputPaths[0] + "/in2.txt",
       this.inputPaths[0] + "/dep2a.txt",
-      this.inputPaths[0] + "/dep2b",
-      this.inputPaths[0] + "/dep2c"
+      this.inputPaths[0] + "/dep2b"
     ];
   }
 }
@@ -124,6 +123,12 @@ describe("MultiFilter", () => {
 
     it("rebuilds when a file is removed", () => {
       fs.unlinkSync(fixturePath + "/dep2a.txt");
+      let oldCompile2 = node.compile2;
+      node.compile2 = function() {
+        return oldCompile2
+          .apply(node, arguments)
+          .filter(p => !p.match(/dep2a/));
+      };
       return rebuild().then(() => {
         expectRecompile(false, true);
       });
@@ -131,13 +136,6 @@ describe("MultiFilter", () => {
 
     it("rebuilds when a file is changed in a directory", () => {
       touchFile("dep2b/file2.txt");
-      return rebuild().then(() => {
-        expectRecompile(false, true);
-      });
-    });
-
-    it("rebuilds when a directory is added", () => {
-      fs.mkdirSync(fixturePath + "/dep2c");
       return rebuild().then(() => {
         expectRecompile(false, true);
       });
@@ -217,30 +215,30 @@ describe("MultiFilter", () => {
         return expect(
           fixture.build(
             new FailingPlugin(["file.txt"], () => {
-              return undefined;
+              return { dependencies: "foo" };
             })
           )
-        ).to.be.rejectedWith(/must return an array/);
+        ).to.be.rejectedWith(/expected.*array/i);
       });
 
       it("requires that the dependencies array is non-empty", () => {
         return expect(
           fixture.build(
             new FailingPlugin(["file.txt"], () => {
-              return [];
+              return { dependencies: [] };
             })
           )
         ).to.be.rejectedWith(/least one dependency/);
       });
 
-      it("requires that at least one dependency exists", () => {
+      it("requires that dependencies exist", () => {
         return expect(
           fixture.build(
             new FailingPlugin(["file.txt"], () => {
-              return ["/does_not_exist"];
+              return { dependencies: ["/does_not_exist"] };
             })
           )
-        ).to.be.rejectedWith(/files exist/);
+        ).to.be.rejectedWith(/ENOENT/);
       });
     });
   });
