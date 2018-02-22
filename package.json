@@ -21,16 +21,16 @@
   ],
   "dependencies": {
     "broccoli-plugin": "^1.0.0",
-    "merge-trees": "^1.0.1",
+    "merge-trees": "^2.0.0",
     "mkdirp": "^0.5.1",
     "promise-map-series": "^0.2.1"
   },
   "devDependencies": {
     "broccoli-fixture": "^1.0.0",
-    "chai": "^3.0.0",
-    "chai-as-promised": "^6.0.0",
-    "mocha": "^3.2.0",
-    "mocha-eslint": "^3.0.1",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^5.0.1",
+    "mocha-eslint": "^4.1.0",
     "rimraf": "^2.4.2"
   }
 }
