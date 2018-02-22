@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-let crypto = require('crypto');
-let util = require('util');
-let fs = require('fs');
+let crypto = require("crypto");
+let util = require("util");
+let fs = require("fs");
 
 module.exports = hashFiles;
 
 class Hash {
   constructor() {
-    this.hash = crypto.createHash('md4');
+    this.hash = crypto.createHash("md4");
   }
 
   updateBuffer(buf) {
@@ -52,19 +52,21 @@ class Hash {
   }
 
   digest() {
-    return this.hash.digest('hex');
+    return this.hash.digest("hex");
   }
 }
 
 function hashFiles(fullPaths, options) {
   if (options == null) options = {};
-  let hash = new Hash;
+  let hash = new Hash();
   let filesFound = 0;
   for (let i = 0; i < fullPaths.length; i++) {
     filesFound += _hashFileOrDirectory(hash, fullPaths[i]);
   }
   if (options.failIfNoFilesFound && filesFound === 0) {
-    throw new Error('None of the following files exist: ' + util.inspect(fullPaths));
+    throw new Error(
+      "None of the following files exist: " + util.inspect(fullPaths)
+    );
   }
   return hash.digest();
 }
@@ -98,7 +100,7 @@ function _hashFileOrDirectory(hash, fullPath) {
     for (let i = 0; i < entries.length; i++) {
       hash.updateString(entries[i]);
       hash.updateUInt8(0);
-      filesFound += _hashFileOrDirectory(hash, fullPath + '/' + entries[i]);
+      filesFound += _hashFileOrDirectory(hash, fullPath + "/" + entries[i]);
     }
   } else if (stats.isFile()) {
     hash.updateUInt8(FILE_TAG);
