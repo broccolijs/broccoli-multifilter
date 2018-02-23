@@ -11,6 +11,8 @@ m-to-n.
 npm install --save broccoli-multifilter
 ```
 
+This package requires Node 6 or newer.
+
 ## Usage example
 
 ```
