@@ -26,7 +26,8 @@ let Multifilter = require("broccoli-multifilter");
 
 class MyPlugin extends Multifilter {
   build() {
-    let inputFiles = ["foo.js"]
+    let inputFiles = ["foo.js"];
+
     return this.buildAndCache(
       inputFiles,
       (inputFile, outputDirectory) => {
@@ -37,8 +38,11 @@ class MyPlugin extends Multifilter {
         fs.copyFileSync(fullInputPath, fullOutputPath);
 
         return {
-          dependencies: [fullInputPath, "included.js"]
-        }
+          dependencies: [
+            fullInputPath,
+            path.join(this.inputPaths[0], "included.js")
+          ]
+        };
       }
     );
   }
