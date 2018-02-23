@@ -3,13 +3,13 @@
 [![Build Status](https://travis-ci.org/broccolijs/broccoli-multifilter.svg?branch=master)](https://travis-ci.org/broccolijs/broccoli-multifilter)
 
 This is a helper base class for Broccoli plugins similar to
-[broccoli-filter](https://github.com/broccolijs/broccoli-filter). While
-broccoli-filter maps 1 input file into 1 output file at a time,
-broccoli-multifilter maps *m* input files into *n* output files.
-
-For example, plugins for compilers that have `include` directives to include
-other dependent files cannot be processed by broccoli-filter, since
-broccoli-filter's caching logic cannot accomodate dependencies.
+[broccoli-filter](https://github.com/broccolijs/broccoli-filter). The
+broccoli-filter base class maps 1 input file into 1 output file at a time. As a
+result, plugins for compilers that have `include` directives to include other
+dependent files cannot use broccoli-filter, since broccoli-filter's caching
+logic cannot accomodate dependencies. By contrast, broccoli-multifilter allows
+you to provide a list of dependencies for each input file, thereby mapping *m*
+input files into *n* output files at a time.
 
 ## Installation
 
