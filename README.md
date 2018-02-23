@@ -1,6 +1,7 @@
 # broccoli-multifilter
 
 [![Build Status](https://travis-ci.org/broccolijs/broccoli-multifilter.svg?branch=master)](https://travis-ci.org/broccolijs/broccoli-multifilter)
+[![Build status](https://ci.appveyor.com/api/projects/status/moy1oeep96yms3rx/branch/master?svg=true)](https://ci.appveyor.com/project/joliss/broccoli-multifilter/branch/master)
 
 This is a helper base class for Broccoli plugins similar to
 [broccoli-filter](https://github.com/broccolijs/broccoli-filter). The

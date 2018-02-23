@@ -2,28 +2,29 @@
 
 # Fix line endings in Windows. (runs before repo cloning)
 init:
-  - git config --global core.autocrlf input
+  - git config --global core.autocrlf true
 
 # Test against these versions of Node.js.
 environment:
   matrix:
-    - nodejs_version: "4"
     - nodejs_version: "6"
+    - nodejs_version: "8"
 
 # Install scripts. (runs after repo cloning)
 install:
+  - git rev-parse HEAD
   # Get the latest stable version of Node 0.STABLE.latest
-  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
-  - set CI=true
-  # Typical npm stuff.
-  - npm install
+  - ps: Install-Product node $env:nodejs_version
+  - md C:\nc
+  - npm config set cache C:\nc
+  - npm version
+  - npm install --no-optional
 
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
-  - node --version
-  - npm --version
-  - npm test
+  - npm version
+  - cmd: npm run test
 
 # Don't actually build.
 build: off
