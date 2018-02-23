@@ -1,5 +1,7 @@
 # master
 
+# 2.1.0
+
 * Forward "name" constructor option in addition to "annotation"
 
 # 2.0.0
