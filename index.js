@@ -12,6 +12,7 @@ class MultiFilter extends Plugin {
   constructor(inputNodes, options) {
     if (options == null) options = {};
     super(inputNodes, {
+      name: options.name,
       annotation: options.annotation
     });
     this._cacheCounter = 0;

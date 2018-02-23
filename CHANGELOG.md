@@ -1,5 +1,7 @@
 # master
 
+* Forward "name" constructor option in addition to "annotation"
+
 # 2.0.0
 
 * We now require that all dependencies exist, and expect a `{ dependencies:
