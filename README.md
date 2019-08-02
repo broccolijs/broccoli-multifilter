@@ -22,7 +22,7 @@ This package requires Node 6 or newer.
 
 ## Usage example
 
-```
+```js
 let Multifilter = require("broccoli-multifilter");
 
 class MyPlugin extends Multifilter {
