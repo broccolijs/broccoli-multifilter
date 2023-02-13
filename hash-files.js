@@ -8,7 +8,7 @@ module.exports = hashFiles;
 
 class Hash {
   constructor() {
-    this.hash = crypto.createHash("md4");
+    this.hash = crypto.createHash("sha512");
   }
 
   updateBuffer(buf) {
