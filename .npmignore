@@ -1,6 +1,4 @@
 /.eslintrc
-/.travis.yml
-/appveyor.yml
 /test.js
 /yarn.lock
 *.tmp
